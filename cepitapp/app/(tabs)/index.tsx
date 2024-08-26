@@ -18,11 +18,15 @@ export default function HomeScreen() {
     if (userForm.username?.length < 5) {
       setErrorUsername("Username invalid");
       allValid = false;
+    } else {
+      setErrorUsername("");
     }
     if (userForm.password?.length < 5) {
       setErrorPassword("Password invalid");
       allValid = false;
-    } 
+    } else {
+      setErrorPassword("");
+    }
     if (!allValid) {
       return;
     }
