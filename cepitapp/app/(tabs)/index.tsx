@@ -4,6 +4,7 @@ import { useState } from 'react';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import { login } from '@/service/auth';
 
 export default function HomeScreen() {
   const [userForm, setUserForm] = useState({
@@ -31,7 +32,10 @@ export default function HomeScreen() {
       return;
     }
     // puedo llamar al backend a procesar el login
-
+    const rtaLogin = await login({
+      email: userForm.username,
+      password: userForm.password
+    })
   }
 
   return (
