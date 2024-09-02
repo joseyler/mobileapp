@@ -1,110 +1,126 @@
-import { Image, StyleSheet, Platform, TextInput, Button } from 'react-native';
-import { useState } from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from 'expo-router';
+import { StyleSheet, Image, Platform } from 'react-native';
 
+import { Collapsible } from '@/components/Collapsible';
+import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import { login } from '@/service/auth';
+import { ThemedView } from '@/components/ThemedView';
+import { useEffect, useState } from 'react';
+import { obtenerToken } from '../../service/secure-store';
+import { updateTokenBackend } from '@/service/axios';
+import { getUserInformation } from '@/service/auth';
+import { UserInfo } from '../model/user-info';
 
-export default function HomeScreen() {
-  const [userForm, setUserForm] = useState({
-    username: '',
-    password: ''
-  });
-  const [errorUsername, setErrorUsername] =useState("");
-  const [errorPassword, setErrorPassword] =useState("");
+export default function HomeView() {
+  const router = useRouter();
+  const [user, setUser] = useState<UserInfo>();
 
-  const loginUser = async () => {
-    let allValid = true;
-    if (userForm.username?.length < 5) {
-      setErrorUsername("Username invalid");
-      allValid = false;
+  const validarSesion = async () => {
+    const tokenSession = await obtenerToken();
+    if (!tokenSession) {
+      router.navigate('/login');
     } else {
-      setErrorUsername("");
+      updateTokenBackend(tokenSession);
+      const userInfo = await getUserInformation();
+      setUser(userInfo);
     }
-    if (userForm.password?.length < 5) {
-      setErrorPassword("Password invalid");
-      allValid = false;
-    } else {
-      setErrorPassword("");
-    }
-    if (!allValid) {
-      return;
-    }
-    // puedo llamar al backend a procesar el login
-    const rtaLogin = await login({
-      email: userForm.username,
-      password: userForm.password
-    })
   }
+
+  useEffect(() => {
+    validarSesion();
+  }, []);
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/logoCepit.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.stepContainer}>
-          <ThemedText type='defaultSemiBold'>Usuario</ThemedText>
-          <TextInput 
-            style={styles.inputUsername}
-            inputMode='email'
-            value={userForm.username}
-            onChangeText={(text) =>setUserForm({
-              ...userForm,
-              username: text, 
-            })}
-          />  
-          {errorUsername && (
-            <ThemedText type='errorMessage'>{errorUsername}</ThemedText>
-          )}
-          <ThemedText type='defaultSemiBold'>Password</ThemedText>
-          <TextInput 
-            style={styles.inputUsername}
-            inputMode='text'
-            value={userForm.password}
-            secureTextEntry={true}
-            onChangeText={(text) =>setUserForm({
-              ...userForm,
-              password: text, 
-            })}
-          />  
-          {errorPassword && (
-             <ThemedText type='errorMessage'>{errorPassword}</ThemedText>
-          )}
-          <Button title={'Login'} onPress={loginUser} />
+      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
+      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="title">{`Wellcome ${user?.username}`}</ThemedText>
       </ThemedView>
-      
+      <ThemedText>{JSON.stringify(user)}</ThemedText>
+      <Collapsible title="File-based routing">
+        <ThemedText>
+          This app has two screens:{' '}
+          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
+          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
+        </ThemedText>
+        <ThemedText>
+          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
+          sets up the tab navigator.
+        </ThemedText>
+        <ExternalLink href="https://docs.expo.dev/router/introduction">
+          <ThemedText type="link">Learn more</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+      <Collapsible title="Android, iOS, and web support">
+        <ThemedText>
+          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
+          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
+        </ThemedText>
+      </Collapsible>
+      <Collapsible title="Images">
+        <ThemedText>
+          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
+          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
+          different screen densities
+        </ThemedText>
+        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
+        <ExternalLink href="https://reactnative.dev/docs/images">
+          <ThemedText type="link">Learn more</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+      <Collapsible title="Custom fonts">
+        <ThemedText>
+          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
+          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
+            custom fonts such as this one.
+          </ThemedText>
+        </ThemedText>
+        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
+          <ThemedText type="link">Learn more</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+      <Collapsible title="Light and dark mode components">
+        <ThemedText>
+          This template has light and dark mode support. The{' '}
+          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
+          what the user's current color scheme is, and so you can adjust UI colors accordingly.
+        </ThemedText>
+        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
+          <ThemedText type="link">Learn more</ThemedText>
+        </ExternalLink>
+      </Collapsible>
+      <Collapsible title="Animations">
+        <ThemedText>
+          This template includes an example of an animated component. The{' '}
+          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
+          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
+          to create a waving hand animation.
+        </ThemedText>
+        {Platform.select({
+          ios: (
+            <ThemedText>
+              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
+              component provides a parallax effect for the header image.
+            </ThemedText>
+          ),
+        })}
+      </Collapsible>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  headerImage: {
+    color: '#808080',
+    bottom: -90,
+    left: -35,
     position: 'absolute',
   },
-  inputUsername: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '600',
-    backgroundColor: '#FFFFFF',
-    height: 40,
-    borderRadius: 3,
-  }
+  titleContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
 });
