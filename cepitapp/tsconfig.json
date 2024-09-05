@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/model/schema.js"  ]
+, "app/model/schema.ts", "app/model/usuario.js", "app/database/index.native.js"  ]
 }

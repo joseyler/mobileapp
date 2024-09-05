@@ -2,15 +2,16 @@ import { Platform } from 'react-native'
 import { Database } from '@nozbe/watermelondb'
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite'
 
-import schema from './model/schema'
+import {mySchema} from '../model/schema'
+import Usuario from '../model/usuario'
 
 
 
 const adapter = new SQLiteAdapter({
-  schema,
+ mySchema,
 
  
-  jsi: true, 
+ 
  
   onSetUpError: error => {
     
@@ -18,9 +19,10 @@ const adapter = new SQLiteAdapter({
 })
 
 
-const database = new Database({
+export const database = new Database({
   adapter,
   modelClasses: [
+    Usuario
 
   ],
 })

@@ -5,6 +5,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { login } from '@/service/auth';
+import { getWatermelon } from '@/service/watermelon';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -33,13 +34,15 @@ export default function LoginScreen() {
       return;
     }
     // puedo llamar al backend a procesar el login
-    const rtaLogin = await login({
+    /*const rtaLogin = await login({
       email: userForm.username,
       password: userForm.password
     });
     if (rtaLogin) {
       router.navigate('/');
-    }
+    }*/
+   const rtaLogin = await getWatermelon();
+   
   }
 
   return (
