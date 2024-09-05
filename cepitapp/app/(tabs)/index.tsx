@@ -8,25 +8,30 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useEffect, useState } from 'react';
-import { obtenerToken } from '../../service/secure-store';
+//import { obtenerToken } from '../../service/secure-store';
 import { updateTokenBackend } from '@/service/axios';
 import { getUserInformation } from '@/service/auth';
 import { UserInfo } from '../model/user-info';
 
+import { useQuery } from "@realm/react";
+import { User } from './../schemas/Usuario';
+
 export default function HomeView() {
+  const users = useQuery(User);
+  console.log(users);
   const router = useRouter();
   const [user, setUser] = useState<UserInfo>();
 
   const validarSesion = async () => {
-    const tokenSession = await obtenerToken();
-    if (!tokenSession) {
+   //const tokenSession = await obtenerToken();
+    //if (!tokenSession) {
       router.navigate('/login');
-    } else {
-      updateTokenBackend(tokenSession);
+    //} else {
+   //   updateTokenBackend(tokenSession);
       const userInfo = await getUserInformation();
       setUser(userInfo);
     }
-  }
+  //}
 
   useEffect(() => {
     validarSesion();
